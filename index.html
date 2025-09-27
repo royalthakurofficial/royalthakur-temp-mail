@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoyalThakur - Professional Temp Mail Service</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-envelope"></i>
+                <span>RoyalThakur Mail</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#api">API</a>
+                <div class="auth-buttons">
+                    <button id="loginBtn" class="btn-outline">Login</button>
+                    <button id="registerBtn" class="btn-primary">Sign Up</button>
+                </div>
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <span id="userEmail"></span>
+                    <div class="dropdown">
+                        <a href="/dashboard">Dashboard</a>
+                        <a href="/profile">Profile</a>
+                        <button id="logoutBtn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <h1>Professional Temporary Email Service</h1>
+            <p>Secure, anonymous, and disposable email addresses for your online activities</p>
+            
+            <div class="email-generator">
+                <div class="generator-box">
+                    <input type="text" id="emailInput" placeholder="Create custom email..." readonly>
+                    <button id="generateBtn" class="btn-primary">
+                        <i class="fas fa-bolt"></i> Generate Email
+                    </button>
+                </div>
+                <div class="email-display" id="emailDisplay" style="display: none;">
+                    <span id="generatedEmail"></span>
+                    <button id="copyEmail" class="btn-outline">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <h3>10,000+</h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat">
+                    <h3>50,000+</h3>
+                    <p>Emails Daily</p>
+                </div>
+                <div class="stat">
+                    <h3>99.9%</h3>
+                    <p>Uptime</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Complete Privacy</h3>
+                    <p>Keep your personal email safe from spam and tracking</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Instant Setup</h3>
+                    <p>Create temporary emails in seconds, no registration required</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access your emails from any device, anywhere</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-code"></i>
+                    <h3>API Access</h3>
+                    <p>Integrate with your apps using our powerful API</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2>Choose Your Plan</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Free Plan</h3>
+                    <div class="price">₹0<span>/month</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> 100 API calls/day</li>
+                        <li><i class="fas fa-check"></i> 5 emails per day</li>
+                        <li><i class="fas fa-check"></i> 1 day storage</li>
+                        <li><i class="fas fa-check"></i> Basic support</li>
+                    </ul>
+                    <button class="btn-outline" onclick="selectPlan('free')">Get Started</button>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="badge">Most Popular</div>
+                    <h3>Premium Plan</h3>
+                    <div class="price">₹299<span>/month</span></div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> 10,000 API calls/day</li>
+                        <li><i class="fas fa-check"></i> 100 emails per day</li>
+                        <li><i class="fas fa-check"></i> 30 days storage</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                        <li><i class="fas fa-check"></i> API access</li>
+                    </ul>
+                    <button class="btn-primary" onclick="selectPlan('premium')">Upgrade Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login to Your Account</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="showRegister">Sign up</a></p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create New Account</h2>
+            <form id="registerForm">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <select>
+                    <option value="free">Free Plan</option>
+                    <option value="premium">Premium Plan</option>
+                </select>
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
