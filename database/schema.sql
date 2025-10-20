@@ -1,0 +1,84 @@
+-- MySQL schema for Royal Temp Mail
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  plan VARCHAR(32) NOT NULL DEFAULT 'free',
+  is_verified TINYINT(1) NOT NULL DEFAULT 0,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  is_admin TINYINT(1) NOT NULL DEFAULT 0,
+  verify_token VARCHAR(64) DEFAULT NULL,
+  reset_token VARCHAR(64) DEFAULT NULL,
+  reset_token_expires_at DATETIME DEFAULT NULL,
+  api_key VARCHAR(64) DEFAULT NULL,
+  created_at DATETIME NOT NULL,
+  INDEX (plan),
+  INDEX (api_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS addresses (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NULL,
+  address VARCHAR(255) NOT NULL UNIQUE,
+  forwarding_to VARCHAR(255) DEFAULT NULL,
+  webhook_url VARCHAR(255) DEFAULT NULL,
+  is_generated TINYINT(1) NOT NULL DEFAULT 1,
+  created_at DATETIME NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS emails (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  address_id INT NOT NULL,
+  sender VARCHAR(255) NOT NULL,
+  subject VARCHAR(255) DEFAULT NULL,
+  text MEDIUMTEXT DEFAULT NULL,
+  html MEDIUMTEXT DEFAULT NULL,
+  created_at DATETIME NOT NULL,
+  FOREIGN KEY (address_id) REFERENCES addresses(id) ON DELETE CASCADE,
+  INDEX (address_id),
+  INDEX (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS payments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  utr VARCHAR(64) NOT NULL,
+  screenshot_path VARCHAR(255) NOT NULL,
+  amount_inr DECIMAL(10,2) NOT NULL DEFAULT 299.00,
+  status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  created_at DATETIME NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  `key` VARCHAR(64) NOT NULL,
+  ts DATETIME NOT NULL,
+  INDEX (user_id, `key`),
+  INDEX (ts)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user_logs (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  action VARCHAR(64) NOT NULL,
+  meta JSON NULL,
+  created_at DATETIME NOT NULL,
+  INDEX (user_id, action),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS api_usage (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  endpoint VARCHAR(128) NOT NULL,
+  day DATE NOT NULL,
+  count INT NOT NULL DEFAULT 0,
+  UNIQUE KEY unique_usage (user_id, endpoint, day),
+  INDEX (day),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
